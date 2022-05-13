@@ -19,24 +19,26 @@ module.exports = sourceId => ({
         //const controller = creep.room.controller
         creep.say('www')
 
-        /*
+        
         var closestDamagedWall = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => (structure.structureType == STRUCTURE_WALL && structure.hits < 2000000) });
-
+        
+        
         if(closestDamagedWall.length) {
           if (creep.repair(closestDamagedWall[0]) == ERR_NOT_IN_RANGE) {creep.moveTo(closestDamagedWall[0])}
         }
-        */
+        
+        /*
         var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
         if(targets) {
             if(creep.build(targets) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(targets, {visualizePathStyle: {stroke: '#ffffff'}});
             }
         }
-
+        */
         else {
           var closestDamagedNoWall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-          filter: (structure) => structure.hits < 3000000 && structure.structureType == STRUCTURE_RAMPART });
+          filter: (structure) => structure.hits < 5000000 && structure.structureType == STRUCTURE_RAMPART });
           if (creep.repair(closestDamagedNoWall) == ERR_NOT_IN_RANGE) creep.moveTo(closestDamagedNoWall)
           else {
             var closesRoad = creep.pos.findClosestByRange(FIND_STRUCTURES, {
