@@ -10,6 +10,10 @@
     source: creep => {
         const source = Game.getObjectById(sourceId)
         
+        if (creep.ticksToLive < 50) { 
+            return true
+        }
+
         if (creep.harvest(source) == ERR_NOT_IN_RANGE) 
             creep.moveTo(source);
       

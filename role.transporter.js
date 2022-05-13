@@ -21,28 +21,41 @@ module.exports = sourceId => ({
     },
     // 升级控制器
     target: creep => {
+      const source = Game.getObjectById(sourceId)
 
-
-        var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+      if (creep.room.energyAvailable < creep.room.energyCapacityAvailable) {
+        var targets = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
           filter: (structure) => (
-                  (structure.structureType == STRUCTURE_EXTENSION ||
-                  structure.structureType == STRUCTURE_SPAWN ||
-                  structure.structureType == STRUCTURE_TOWER) &&
-                  structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-                )
-        });
-        var rtransfer = creep.transfer(targets, RESOURCE_ENERGY)
-        if (rtransfer == ERR_NOT_IN_RANGE) creep.moveTo(targets)
-        else if (rtransfer == ERR_INVALID_TARGET) {
-          var storage = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => (
-                    structure.structureType == STRUCTURE_STORAGE
-                    
-                  )
+            (structure.structureType == STRUCTURE_EXTENSION ||
+            structure.structureType == STRUCTURE_SPAWN) &&
+            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+            )
           });
-          if (creep.transfer(storage, RESOURCE_ENERGY)) creep.moveTo(storage)
+        var rtransfer = creep.transfer(targets, RESOURCE_ENERGY)
+        if (rtransfer == ERR_NOT_IN_RANGE) creep.moveTo(targets)    
+      }
 
+      else  {     //transport to the storage or tower 
+
+        var targets = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+          filter: (structure) => (
+            (structure.structureType == STRUCTURE_TOWER || 
+              structure.structureType == STRUCTURE_LAB ||
+              (structure.structureType == STRUCTURE_FACTORY && structure.store.getUsedCapacity(RESOURCE_ENERGY) < 10000))
+               &&
+            structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 300
+            )
+          });
+        if (targets) {
+          if (creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(targets)
         }
+        else {
+          const storage = creep.room.storage
+          if (storage && !source.pos.isEqualTo(storage))
+            if (creep.transfer(storage, RESOURCE_ENERGY)) creep.moveTo(storage)
+        }
+      }
+
         // 自己身上的能量没有了，返回 true（切换至 source 阶段）
         return creep.store[RESOURCE_ENERGY] <= 0
     }

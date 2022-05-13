@@ -10,8 +10,39 @@ module.exports = sourceId => ({
     // 采集能量矿
     source: creep => {
         
-        const source = Game.getObjectById(sourceId)
-        if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(source)
+        ////creep.moveTo(Game.flags.FlagBuilders, {visualizePathStyle: {stroke: '#ffffff'}});
+        const lab = Game.getObjectById('6264552220d98ea4573bac78');
+        if(creep.room.name == 'W31N7' && Game.rooms['W31N7'].controller.level == 7) {
+          var partsBoost = creep.body.filter((part) => {
+            return part.boost == RESOURCE_GHODIUM_HYDRIDE
+          }).length
+
+          const terminal = creep.room.terminal
+          
+          if (terminal.store.getUsedCapacity(RESOURCE_GHODIUM_HYDRIDE) > 0 && partsBoost < 5) {
+            if (lab.boostCreep(creep) == ERR_NOT_IN_RANGE) creep.moveTo(lab)
+            console.log('Room "'+creep.room.name+'" has '+partsBoost+ ' boost' );
+
+          }
+
+          else {
+            
+              const source = Game.getObjectById(sourceId)
+              if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(source)
+            
+          }          
+
+
+
+        }
+
+        else {
+          
+          const source = Game.getObjectById(sourceId)
+          if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(source)
+            
+        }
+        
 
         /*var source = creep.pos.findClosestByRange(FIND_STRUCTURES, {
           filter: (structure) => (
@@ -28,42 +59,21 @@ module.exports = sourceId => ({
     // 升级控制器
     target: creep => {
         
-
+      /*
       var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
           if(targets) {
               if(creep.build(targets) == ERR_NOT_IN_RANGE) {
                   creep.moveTo(targets, {visualizePathStyle: {stroke: '#ffffff'}});
               }
           } else {
-
-
+      */
+      
+        if (creep.room.controller.level != 8) {
             const controller = creep.room.controller
             if (creep.upgradeController(controller) == ERR_NOT_IN_RANGE) creep.moveTo(controller)
-          }
+         // }
+        }
        
-       /* var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => (
-                    (structure.structureType == STRUCTURE_EXTENSION ||
-                    structure.structureType == STRUCTURE_SPAWN ||
-                    structure.structureType == STRUCTURE_TOWER) &&
-                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-                  )
-          });
-          var rtransfer = creep.transfer(targets, RESOURCE_ENERGY)
-          if (rtransfer == ERR_NOT_IN_RANGE) creep.moveTo(targets)
-          else if (rtransfer == ERR_INVALID_TARGET) {
-            var storage = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-              filter: (structure) => (
-                      structure.structureType == STRUCTURE_STORAGE  &&
-                      structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-                    )
-            });
-            if (creep.transfer(storage, RESOURCE_ENERGY)) creep.moveTo(storage)
-  
-          }*/
-          
-        // 自己身上的能量没有了，返回 true（切换至 source 阶段）
-        //return creep.store[RESOURCE_ENERGY] <= 5
-        return (creep.store.getUsedCapacity() <= 5)
+        return (creep.store.getUsedCapacity() <= 0)
     }
 })

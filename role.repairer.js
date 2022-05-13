@@ -18,35 +18,18 @@ module.exports = sourceId => ({
     target: creep => {
         //const controller = creep.room.controller
         creep.say('www')
+        const rcl = creep.room.controller.level
+        
+        var pointsToRepair = Math.pow(rcl/8, 2.2)*1000000
+        if(rcl == 7 || rcl == 8) pointsToRepair = 8000000
 
-        
-        var closestDamagedWall = creep.room.find(FIND_STRUCTURES, {
-        filter: (structure) => (structure.structureType == STRUCTURE_WALL && structure.hits < 2000000) });
-        
-        
-        if(closestDamagedWall.length) {
-          if (creep.repair(closestDamagedWall[0]) == ERR_NOT_IN_RANGE) {creep.moveTo(closestDamagedWall[0])}
-        }
-        
-        /*
-        var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-        if(targets) {
-            if(creep.build(targets) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets, {visualizePathStyle: {stroke: '#ffffff'}});
-            }
-        }
-        */
-        else {
-          var closestDamagedNoWall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-          filter: (structure) => structure.hits < 5000000 && structure.structureType == STRUCTURE_RAMPART });
-          if (creep.repair(closestDamagedNoWall) == ERR_NOT_IN_RANGE) creep.moveTo(closestDamagedNoWall)
-          else {
-            var closesRoad = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-              filter: (structure) => structure.hits < structure.hitsMax-1000 && structure.structureType == STRUCTURE_ROAD });
-              if (creep.repair(closesRoad) == ERR_NOT_IN_RANGE) creep.moveTo(closesRoad)
-
+          var closestDamaged = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+          filter: (structure) => structure.hits < pointsToRepair && 
+            (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL) });
+          if(closestDamaged) {
+            if (creep.repair(closestDamaged) == ERR_NOT_IN_RANGE) creep.moveTo(closestDamaged,{reusePath: 10})
           }
-        }
+          
         // 自己身上的能量没有了，返回 true（切换至 source 阶段）
         return creep.store[RESOURCE_ENERGY] <= 0
     }

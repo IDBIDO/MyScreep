@@ -9,7 +9,9 @@ const roles = {
     builder: require('role.builder'),
     repairer: require('role.repairer'),
     colonizer: require('role.colonizer'),
-    miner: require('role.miner')
+    miner: require('role.miner'),
+    lab: require('role.lab'),
+    centralManager: require('role.centralManager')
 }
 
 // 添加 work 方法
